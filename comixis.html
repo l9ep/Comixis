@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>COMIXIS</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --accent:#9b4dff;--accent2:#bf80ff;--accent-dim:#3d1a66;--accent-glow:rgba(155,77,255,0.35);
+  --bg:#080810;--bg2:#0e0e1a;--bg3:#14142a;--bg4:#1c1c35;
+  --border:#1e1e38;--border2:#2a2a4a;
+  --text:#f0eeff;--muted:#7070a0;--muted2:#3a3a60;
+  --radius:8px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{display:block}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--accent-dim);border-radius:2px}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 20%,rgba(155,77,255,.07) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 35% at 85% 80%,rgba(100,40,200,.06) 0%,transparent 70%);
+}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(8,8,16,0.94);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  padding:0 16px;height:54px;
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:20px;letter-spacing:5px;
+  color:var(--accent2);
+  text-shadow:0 0 22px var(--accent-glow);
+  flex-shrink:0;
+}
+.nav-search{
+  flex:1;
+  display:flex;align-items:center;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius);overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;
+}
+.nav-search:focus-within{
+  border-color:var(--accent-dim);
+  box-shadow:0 0 0 3px rgba(155,77,255,.12);
+}
+.nav-search input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:500;
+  padding:10px 12px;
+}
+.nav-search input::placeholder{color:var(--muted2)}
+.nav-search button{
+  padding:0 12px;height:100%;color:var(--muted);
+  transition:color .2s;flex-shrink:0;
+  display:flex;align-items:center;
+}
+.nav-search button:hover{color:var(--accent2)}
+.api-pill{
+  flex-shrink:0;
+  font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:1px;
+  color:var(--muted);
+  display:flex;align-items:center;gap:5px;
+}
+.api-dot{width:6px;height:6px;border-radius:50%;background:var(--muted2);flex-shrink:0}
+.api-dot.live{background:#44ff88;animation:livePulse 2s ease-in-out infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* HERO */
+.hero{
+  position:relative;height:270px;overflow:hidden;background:var(--bg2);
+  cursor:pointer;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center top;
+  filter:brightness(.25) saturate(1.3);
+  transition:background-image .7s ease;
+}
+.hero-purple{position:absolute;inset:0;background:linear-gradient(135deg,rgba(155,77,255,.18) 0%,transparent 60%)}
+.hero-grad{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to right,rgba(8,8,16,.98) 0%,rgba(8,8,16,.5) 55%,transparent 100%),
+    linear-gradient(to top,var(--bg) 0%,transparent 50%);
+}
+.hero-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  height:100%;padding:16px 16px 22px;gap:5px;
+}
+.hero-badge{
+  font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;
+  padding:3px 9px;border-radius:3px;display:inline-block;width:fit-content;
+  animation:badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 rgba(155,77,255,0)}50%{box-shadow:0 0 12px rgba(155,77,255,.5)}}
+.hero-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:30px;letter-spacing:.5px;line-height:1.05;
+  text-shadow:0 2px 16px rgba(0,0,0,.9);
+}
+.hero-meta{font-family:'Syne',sans-serif;font-size:12px;font-weight:500;color:var(--muted)}
+.hero-meta b{color:var(--accent2)}
+.hero-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:linear-gradient(135deg,var(--accent),#7b2fff);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  padding:9px 18px;border-radius:var(--radius);width:fit-content;margin-top:6px;
+  box-shadow:0 4px 20px rgba(155,77,255,.4);
+  transition:transform .15s,box-shadow .2s;
+}
+.hero-btn:active{transform:scale(.96)}
+.hero-dots{display:flex;gap:5px;position:absolute;bottom:18px;right:16px;z-index:2}
+.hero-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--muted2);
+  transition:background .3s,width .3s;cursor:pointer;
+}
+.hero-dot.active{background:var(--accent);width:18px;border-radius:3px}
+
+/* SECTION */
+.section{padding:0 0 8px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:20px 16px 10px}
+.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:2px;text-transform:uppercase}
+.sec-title span{color:var(--accent2)}
+
+/* HSCROLL */
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:0 16px 4px}
+.hscroll::-webkit-scrollbar{display:none}
+
+/* CARD */
+.card{flex-shrink:0;width:108px;cursor:pointer;transition:transform .2s}
+.card:active{transform:scale(.95)}
+.card:hover .card-img{transform:scale(1.06)}
+.card-cover{
+  width:108px;height:156px;border-radius:var(--radius);overflow:hidden;
+  background:var(--bg3);border:1px solid var(--border);
+  box-shadow:0 4px 16px rgba(0,0,0,.5);
+}
+.card-img{width:100%;height:100%;object-fit:cover;transition:transform .35s;display:block}
+.card-fallback{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--muted);
+  text-align:center;padding:8px;line-height:1.3;
+}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--text);margin-top:7px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* LATEST LIST */
+.latest-list{padding:0 16px}
+.latest-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:13px 0;border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
+.latest-item:last-child{border-bottom:none}
+.latest-item:active{opacity:.7}
+.latest-thumb{width:54px;height:76px;border-radius:var(--radius);overflow:hidden;background:var(--bg3);flex-shrink:0;border:1px solid var(--border)}
+.latest-thumb img{width:100%;height:100%;object-fit:cover}
+.latest-info{flex:1;min-width:0}
+.latest-title{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--text);line-height:1.2}
+.latest-pub{font-family:'Syne Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.latest-desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.latest-issues{font-family:'Syne Mono',monospace;font-size:11px;color:var(--muted2);margin-top:6px}
+.latest-issues b{color:var(--text)}
+
+/* GRID */
+.comic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 24px}
+.grid-card{cursor:pointer;transition:transform .2s}
+.grid-card:active{transform:scale(.95)}
+.grid-card:hover .grid-img{transform:scale(1.05)}
+.grid-cover{aspect-ratio:2/3;border-radius:var(--radius);overflow:hidden;background:var(--bg3);position:relative;border:1px solid var(--border)}
+.grid-img{width:100%;height:100%;object-fit:cover;transition:transform .35s;display:block}
+.grid-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:var(--muted);text-align:center;padding:5px}
+.grid-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(8,8,16,.93));
+  padding:22px 6px 7px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:#fff;line-height:1.2;
+}
+
+/* SEARCH RESULTS */
+.search-empty{text-align:center;padding:50px 20px;font-family:'Syne',sans-serif;font-weight:700;font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);grid-column:1/-1}
+.search-empty span{font-size:36px;display:block;margin-bottom:12px}
+
+/* SERIES PAGE */
+#page-series{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto;opacity:0;transition:opacity .25s}
+#page-series.show{opacity:1}
+.back-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  background:rgba(8,8,16,.95);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:10;cursor:pointer;
+}
+.back-bar svg{color:var(--accent)}
+.back-bar span{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+
+.s-hero{position:relative;height:210px;overflow:hidden;background:var(--bg2)}
+.s-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.2) saturate(.8) blur(4px)}
+.s-hero-grad{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,transparent 65%)}
+.s-hero-purple{position:absolute;inset:0;background:linear-gradient(135deg,rgba(155,77,255,.15) 0%,transparent 55%)}
+.s-cover{
+  position:absolute;bottom:-44px;left:16px;
+  width:88px;height:126px;border-radius:var(--radius);overflow:hidden;
+  background:var(--bg3);box-shadow:0 8px 32px rgba(0,0,0,.8);border:2px solid var(--accent-dim);
+}
+.s-cover img{width:100%;height:100%;object-fit:cover}
+
+.s-info{padding:58px 16px 16px}
+.s-title{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:.5px;line-height:1}
+.s-pub{font-family:'Syne Mono',monospace;font-size:11px;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.s-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);color:var(--muted);padding:3px 9px;border-radius:3px;letter-spacing:.3px}
+.s-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-top:10px}
+.s-stats{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.stat{font-family:'Syne Mono',monospace;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:4px 10px;border-radius:3px;letter-spacing:.5px}
+.stat b{color:var(--accent2)}
+
+.issues-section{border-top:1px solid var(--border);margin-top:8px}
+.issues-label{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px;text-transform:uppercase;padding:14px 16px 8px}
+.issues-label span{color:var(--accent2)}
+.issue-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+}
+.issue-row:hover{background:var(--bg2)}
+.issue-row:active{background:var(--bg3)}
+.issue-thumb{width:40px;height:56px;border-radius:5px;overflow:hidden;background:var(--bg3);flex-shrink:0;border:1px solid var(--border)}
+.issue-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.issue-info{flex:1;min-width:0}
+.issue-num{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text)}
+.issue-date{font-family:'Syne Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:.5px}
+.issue-read-btn{
+  background:linear-gradient(135deg,var(--accent),#7b2fff);color:#fff;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  padding:7px 14px;border-radius:5px;flex-shrink:0;
+  box-shadow:0 2px 12px rgba(155,77,255,.35);
+}
+
+/* READER PAGE */
+#page-reader{display:none;position:fixed;inset:0;background:#050508;z-index:400;flex-direction:column}
+.reader-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;
+  background:rgba(8,8,16,.98);border-bottom:1px solid var(--border);
+  flex-shrink:0;gap:8px;
+}
+.reader-back{
+  display:flex;align-items:center;gap:5px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text);padding:7px 12px;border:1px solid var(--border2);border-radius:6px;flex-shrink:0;
+  transition:border-color .2s,background .2s;
+}
+.reader-back:hover{border-color:var(--accent-dim);background:var(--bg2)}
+.reader-back svg{color:var(--accent)}
+.reader-title{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:.5px;
+  color:var(--text);text-align:center;flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.reader-nav{
+  display:flex;align-items:center;gap:5px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text);padding:7px 12px;border:1px solid var(--border2);border-radius:6px;flex-shrink:0;
+  transition:border-color .2s,color .2s;
+}
+.reader-nav:not(:disabled):hover{border-color:var(--accent);color:var(--accent2)}
+.reader-nav:disabled{opacity:.25;cursor:default}
+
+.reader-frame{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;background:#050508}
+.reader-frame iframe{flex:1;width:100%;border:none;min-height:0}
+
+.reader-loading-screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:var(--bg);z-index:2;
+  transition:opacity .3s;
+}
+.reader-loading-screen.gone{opacity:0;pointer-events:none}
+.reader-loading-text{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+
+.reader-notice{
+  flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border);
+  padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.reader-notice-text{font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.3px}
+.reader-notice-text a{color:var(--accent2);text-decoration:underline}
+.notice-close{font-size:18px;color:var(--muted);cursor:pointer;padding:0 4px;line-height:1}
+
+.reader-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:rgba(8,8,16,.98);
+  border-top:1px solid var(--border);flex-shrink:0;gap:8px;
+}
+.reader-progress{font-family:'Syne Mono',monospace;font-size:11px;color:var(--muted);text-align:center;flex:1;letter-spacing:.5px}
+.reader-progress b{color:var(--accent2)}
+
+/* SPINNER */
+.spinner{width:32px;height:32px;border-radius:50%;border:3px solid var(--border2);border-top-color:var(--accent);animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .4s ease both}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">COMIXIS</div>
+  <div class="nav-search">
+    <input type="text" id="search-input" placeholder="Search any comic…" autocomplete="off" spellcheck="false">
+    <button onclick="doSearch()" aria-label="Search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </div>
+  <div class="api-pill">
+    <div class="api-dot" id="api-dot"></div>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="page-home">
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-purple"></div>
+    <div class="hero-grad"></div>
+    <div class="hero-content">
+      <div class="hero-badge" id="hero-badge">FEATURED</div>
+      <div class="hero-title" id="hero-title">—</div>
+      <div class="hero-meta" id="hero-meta"></div>
+      <div class="hero-btn" id="hero-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        READ NOW
+      </div>
+    </div>
+    <div class="hero-dots" id="hero-dots"></div>
+  </div>
+
+  <!-- TRENDING -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-title"><span>TRENDING</span> NOW</div></div>
+    <div class="hscroll" id="trending-row"></div>
+  </div>
+
+  <!-- LATEST -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-title">LATEST <span>ADDED</span></div></div>
+    <div class="latest-list" id="latest-list"></div>
+  </div>
+
+  <!-- GRID -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-title" id="grid-label">ALL <span>COMICS</span></div></div>
+    <div class="comic-grid" id="comic-grid"></div>
+  </div>
+
+</div>
+
+<!-- SERIES PAGE -->
+<div id="page-series">
+  <div class="back-bar" id="series-back">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    <span>BACK</span>
+  </div>
+  <div id="series-content"></div>
+</div>
+
+<!-- READER PAGE -->
+<div id="page-reader">
+  <div class="reader-bar">
+    <div class="reader-back" id="reader-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      BACK
+    </div>
+    <div class="reader-title" id="reader-title">—</div>
+    <div style="display:flex;gap:6px">
+      <button class="reader-nav" id="prev-btn">‹ PREV</button>
+      <button class="reader-nav" id="next-btn">NEXT ›</button>
+    </div>
+  </div>
+  <div class="reader-frame" id="reader-frame">
+    <div class="reader-loading-screen" id="reader-load">
+      <div class="spinner"></div>
+      <div class="reader-loading-text">LOADING…</div>
+    </div>
+  </div>
+  <div class="reader-notice" id="reader-notice">
+    <div class="reader-notice-text">Via <a id="rco-link" href="#" target="_blank">ReadComicOnline</a> · If blocked, open link directly</div>
+    <div class="notice-close" onclick="$('reader-notice').style.display='none'">×</div>
+  </div>
+  <div class="reader-footer">
+    <button class="reader-nav" id="prev-btn2">‹ PREV ISSUE</button>
+    <div class="reader-progress" id="reader-progress">—</div>
+    <button class="reader-nav" id="next-btn2">NEXT ISSUE ›</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ── CORS PROXIES ──────────────────────────────────
+const PROXY_A = url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+const PROXY_B = url => `https://corsproxy.io/?${encodeURIComponent(url)}`;
+const CV = 'https://comicvine.gamespot.com/api';
+
+// ── RCO SLUG MAP ──────────────────────────────────
+const RCO = {
+  'Invincible':'Invincible',
+  'Batman':'Batman',
+  'The Amazing Spider-Man':'The-Amazing-Spider-Man',
+  'Saga':'Saga',
+  'X-Men':'X-Men',
+  'The Walking Dead':'The-Walking-Dead',
+  'Superman':'Superman',
+  'Hellboy':'Hellboy',
+  'Watchmen':'Watchmen',
+  'The Sandman':'The-Sandman',
+  'Iron Man':'Iron-Man',
+  'Daredevil':'Daredevil',
+  'Black Panther':'Black-Panther',
+  'Wonder Woman':'Wonder-Woman',
+  'Green Lantern':'Green-Lantern',
+  'The Flash':'The-Flash',
+  'Captain America':'Captain-America',
+  'Thor':'Thor',
+  'Aquaman':'Aquaman',
+  'Deadpool':'Deadpool',
+};
+
+// ── COMIC DATA ────────────────────────────────────
+let COMICS = [
+  {id:1,cvId:18378,title:'Invincible',pub:'Image Comics',tags:['Superhero','Action'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/213063-invincible.jpg',year:'2003',desc:"Robert Kirkman's epic superhero saga. Mark Grayson discovers his father is the most powerful hero on Earth—and the greatest threat to it.",issues:[]},
+  {id:2,cvId:796,title:'Batman',pub:'DC Comics',tags:['Superhero','Crime'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/5738603-0+%281%29.jpg',year:'1940',desc:"The Dark Knight of Gotham. The world's greatest detective battles crime, corruption, and the darkest corners of human nature.",issues:[]},
+  {id:3,cvId:2529,title:'The Amazing Spider-Man',pub:'Marvel Comics',tags:['Superhero','Action'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/2504895-amazing_spider-man_1_2014.jpg',year:'1963',desc:"With great power comes great responsibility. Peter Parker balances his double life as New York's web-slinging protector.",issues:[]},
+  {id:4,cvId:57269,title:'Saga',pub:'Image Comics',tags:['Sci-Fi','Drama'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/3068928-saga001_cvr.jpg',year:'2012',desc:"Brian K. Vaughan and Fiona Staples' masterpiece. An epic space opera about love, family, and war across the stars.",issues:[]},
+  {id:5,cvId:4971,title:'X-Men',pub:'Marvel Comics',tags:['Superhero','Action'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/273837-x_men_vol_1_1.jpg',year:'1963',desc:"Mutants feared by the world they protect. Professor X's team of extraordinary outcasts fight for coexistence.",issues:[]},
+  {id:6,cvId:18166,title:'The Walking Dead',pub:'Image Comics',tags:['Horror','Drama'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/2504887-walkingdead_01.jpg',year:'2003',desc:"Robert Kirkman's landmark zombie saga. Rick Grimes leads survivors through a world where the dead walk and the living are more dangerous.",issues:[]},
+  {id:7,cvId:1078,title:'Superman',pub:'DC Comics',tags:['Superhero','Action'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/254795-superman_comics.jpg',year:'1939',desc:"The Man of Steel. Kal-El of Krypton, raised as Clark Kent, stands as Earth's greatest protector—hope made flesh.",issues:[]},
+  {id:8,cvId:2462,title:'Hellboy',pub:'Dark Horse Comics',tags:['Horror','Action'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/2504884-hellboy01.jpg',year:'1993',desc:"Mike Mignola's masterwork. A demon raised to destroy humanity chooses instead to be its champion.",issues:[]},
+  {id:9,cvId:15462,title:'Watchmen',pub:'DC Comics',tags:['Superhero','Drama'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/3209312-watchmen.jpg',year:'1986',desc:"Alan Moore and Dave Gibbons' deconstruction of superhero mythology. Who watches the Watchmen?",issues:[]},
+  {id:10,cvId:4846,title:'The Sandman',pub:'DC/Vertigo',tags:['Fantasy','Horror'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/2504891-sandman01.jpg',year:'1988',desc:"Neil Gaiman's magnum opus. Dream of the Endless and his siblings shape the lives of gods and mortals across eternity.",issues:[]},
+  {id:11,cvId:2511,title:'Iron Man',pub:'Marvel Comics',tags:['Superhero','Sci-Fi'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/2504901-iron_man.jpg',year:'1968',desc:"Tony Stark—genius, billionaire, armored Avenger. A man who built a suit of armor to save the world, and himself.",issues:[]},
+  {id:12,cvId:2446,title:'Daredevil',pub:'Marvel Comics',tags:['Superhero','Crime'],cover:'https://comicvine.gamespot.com/a/uploads/scale_medium/0/574/2504902-daredevil.jpg',year:'1964',desc:"The Man Without Fear. Matt Murdock—blinded, enhanced, relentless. Lawyer by day, Devil of Hell's Kitchen by night.",issues:[]},
+];
+
+let currentComicId = null;
+let currentIssueIdx = 0;
+let heroIdx = 0;
+let heroTimer = null;
+let searchTimer = null;
+
+// ── API ────────────────────────────────────────────
+async function cvFetch(endpoint, params){
+  const url = new URL(`${CV}/${endpoint}/`);
+  url.searchParams.set('format','json');
+  for(const [k,v] of Object.entries(params||{})) url.searchParams.set(k,v);
+  try {
+    const r = await fetch(PROXY_A(url.toString()));
+    if(!r.ok) throw 0;
+    return r.json();
+  } catch {
+    const r = await fetch(PROXY_B(url.toString()));
+    return r.json();
+  }
+}
+
+async function loadCovers(){
+  try {
+    const ids = COMICS.map(c=>c.cvId).join('|');
+    const d = await cvFetch('volumes',{
+      filter:`id:${ids}`,
+      field_list:'id,name,image,publisher,start_year,count_of_issues,deck',
+      limit:20
+    });
+    if(d.error==='OK' && d.results){
+      d.results.forEach(v=>{
+        const c = COMICS.find(x=>x.cvId===v.id);
+        if(!c) return;
+        if(v.image?.medium_url) c.cover = v.image.medium_url;
+        if(v.deck) c.desc = v.deck;
+        if(v.count_of_issues) c.totalIssues = v.count_of_issues;
+        if(v.publisher?.name) c.pub = v.publisher.name;
+        if(v.start_year) c.year = v.start_year;
+      });
+      $('api-dot').classList.add('live');
+      rerenderAll();
+    }
+  } catch(e){ console.warn('CV API unavailable, using static data') }
+}
+
+async function loadIssues(comicId){
+  const c = COMICS.find(x=>x.id===comicId);
+  if(!c || c.issues.length>0) return;
+  try {
+    const d = await cvFetch('issues',{
+      filter:`volume:${c.cvId}`,
+      field_list:'id,issue_number,name,cover_date,image',
+      sort:'issue_number:asc',
+      limit:50
+    });
+    if(d.error==='OK' && d.results?.length){
+      c.issues = d.results.map(i=>({
+        num: i.issue_number,
+        label: `#${i.issue_number}${i.name?' — '+i.name:''}`,
+        date: i.cover_date||'',
+        cover: i.image?.medium_url||c.cover,
+      }));
+    } else {
+      // Synthetic fallback
+      const n = Math.min(c.totalIssues||20, 30);
+      c.issues = Array.from({length:n},(_,i)=>({
+        num:String(i+1), label:`#${i+1}`, date:c.year, cover:c.cover
+      }));
+    }
+  } catch {
+    const n = Math.min(c.totalIssues||10, 20);
+    c.issues = Array.from({length:n},(_,i)=>({
+      num:String(i+1), label:`#${i+1}`, date:c.year, cover:c.cover
+    }));
+  }
+}
+
+async function searchCV(q){
+  try {
+    const d = await cvFetch('volumes',{
+      filter:`name:${q}`,
+      field_list:'id,name,publisher,image,start_year,count_of_issues,deck',
+      limit:15
+    });
+    if(d.error==='OK' && d.results?.length){
+      let added = 0;
+      d.results.forEach(v=>{
+        if(COMICS.find(c=>c.cvId===v.id)) return;
+        COMICS.push({
+          id: Date.now()+Math.random(),
+          cvId: v.id,
+          title: v.name,
+          pub: v.publisher?.name||'Unknown',
+          tags: ['Comic'],
+          cover: v.image?.medium_url||'',
+          year: v.start_year||'',
+          desc: v.deck||v.name,
+          totalIssues: v.count_of_issues||0,
+          issues:[]
+        });
+        added++;
+      });
+      if(added) renderGrid(q);
+    }
+  } catch {}
+}
+
+// ── HERO ──────────────────────────────────────────
+function initHero(){
+  const list = COMICS.slice(0,6);
+  $('hero-dots').innerHTML = list.map((_,i)=>`
+    <div class="hero-dot${i===0?' active':''}" onclick="jumpHero(${i})"></div>
+  `).join('');
+  setHero(0);
+  if(heroTimer) clearInterval(heroTimer);
+  heroTimer = setInterval(()=>setHero((heroIdx+1)%list.length), 5000);
+  $('hero-btn').onclick = ()=>openSeries(COMICS[heroIdx].id);
+}
+
+function setHero(idx){
+  const c = COMICS[idx];
+  heroIdx = idx;
+  $('hero-bg').style.backgroundImage = `url(${c.cover})`;
+  $('hero-title').textContent = c.title;
+  $('hero-meta').innerHTML = `<b>${c.pub}</b> · ${c.year}${c.totalIssues?` · ${c.totalIssues} ISSUES`:''}`;
+  $('hero-badge').textContent = c.tags[0]||'FEATURED';
+  document.querySelectorAll('.hero-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+function jumpHero(idx){
+  clearInterval(heroTimer);
+  setHero(idx);
+  heroTimer = setInterval(()=>setHero((heroIdx+1)%6), 5000);
+}
+
+// ── TRENDING ──────────────────────────────────────
+function renderTrending(){
+  $('trending-row').innerHTML = COMICS.slice(0,10).map((c,i)=>`
+    <div class="card fu" style="animation-delay:${i*.04}s" onclick="openSeries(${c.id})">
+      <div class="card-cover">
+        <img class="card-img" src="${c.cover}" loading="lazy"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-fallback" style="display:none">${c.title}</div>
+      </div>
+      <div class="card-title">${c.title}</div>
+      <div class="card-sub">${c.pub}</div>
+    </div>
+  `).join('');
+}
+
+// ── LATEST ────────────────────────────────────────
+function renderLatest(){
+  $('latest-list').innerHTML = COMICS.slice(0,6).map((c,i)=>`
+    <div class="latest-item fu" style="animation-delay:${i*.05}s" onclick="openSeries(${c.id})">
+      <div class="latest-thumb">
+        <img src="${c.cover}" loading="lazy" onerror="this.style.opacity=.3">
+      </div>
+      <div class="latest-info">
+        <div class="latest-title">${c.title}</div>
+        <div class="latest-pub">${c.pub}</div>
+        <div class="latest-desc">${c.desc}</div>
+        <div class="latest-issues"><b>${c.totalIssues||'?'}</b> ISSUES · ${c.year}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── GRID ──────────────────────────────────────────
+function renderGrid(query=''){
+  let list = COMICS;
+  if(query){
+    const q = query.toLowerCase();
+    list = COMICS.filter(c=>
+      c.title.toLowerCase().includes(q)||
+      c.pub.toLowerCase().includes(q)||
+      (c.tags||[]).join(' ').toLowerCase().includes(q)||
+      (c.desc||'').toLowerCase().includes(q)
+    );
+  }
+  $('grid-label').innerHTML = query
+    ? `RESULTS <span>FOR "${query.toUpperCase()}"</span>`
+    : `ALL <span>COMICS</span>`;
+  $('comic-grid').innerHTML = list.length
+    ? list.map((c,i)=>`
+        <div class="grid-card fu" style="animation-delay:${i*.025}s" onclick="openSeries(${c.id})">
+          <div class="grid-cover">
+            <img class="grid-img" src="${c.cover}" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="grid-fallback">${c.title}</div>
+            <div class="grid-overlay">${c.title}</div>
+          </div>
+        </div>
+      `).join('')
+    : `<div class="search-empty"><span>📭</span>NO RESULTS FOUND</div>`;
+}
+
+function rerenderAll(){
+  initHero();
+  renderTrending();
+  renderLatest();
+  renderGrid();
+}
+
+// ── SEARCH ────────────────────────────────────────
+function doSearch(){
+  const val = $('search-input').value.trim();
+  renderGrid(val);
+  if(val.length > 1){
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(()=>searchCV(val), 600);
+  }
+}
+
+$('search-input').addEventListener('input', e=>{
+  clearTimeout(searchTimer);
+  const val = e.target.value.trim();
+  renderGrid(val);
+  if(val.length > 1) searchTimer = setTimeout(()=>searchCV(val), 700);
+});
+
+$('search-input').addEventListener('keydown', e=>{
+  if(e.key==='Enter') doSearch();
+});
+
+// ── SERIES PAGE ───────────────────────────────────
+async function openSeries(id){
+  const c = COMICS.find(x=>x.id===id);
+  if(!c) return;
+  currentComicId = id;
+
+  const pg = $('page-series');
+  const content = $('series-content');
+  pg.style.display = 'block';
+  pg.scrollTop = 0;
+  requestAnimationFrame(()=>pg.classList.add('show'));
+
+  content.innerHTML = `
+    <div class="s-hero">
+      <div class="s-hero-bg" style="background-image:url(${c.cover})"></div>
+      <div class="s-hero-purple"></div>
+      <div class="s-hero-grad"></div>
+      <div class="s-cover"><img src="${c.cover}" onerror="this.style.opacity=.3"></div>
+    </div>
+    <div class="s-info">
+      <div class="s-title">${c.title}</div>
+      <div class="s-pub">${c.pub}</div>
+      <div class="s-tags">${(c.tags||[]).map(t=>`<div class="tag">${t}</div>`).join('')}</div>
+      <div class="s-desc">${c.desc}</div>
+      <div class="s-stats">
+        <div class="stat"><b>${c.totalIssues||'?'}</b> ISSUES</div>
+        <div class="stat"><b>${c.year||'—'}</b></div>
+      </div>
+    </div>
+    <div class="issues-section">
+      <div class="issues-label">ALL <span>ISSUES</span></div>
+      <div id="issues-inner" style="padding:20px 16px;display:flex;align-items:center;gap:10px">
+        <div class="spinner" style="width:22px;height:22px;border-width:2px"></div>
+        <span style="font-family:'Syne Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:1px">LOADING ISSUES…</span>
+      </div>
+    </div>
+  `;
+
+  await loadIssues(id);
+  const fresh = COMICS.find(x=>x.id===id);
+  const inner = $('issues-inner');
+  if(!inner) return;
+
+  if(!fresh.issues.length){
+    inner.innerHTML = `<div style="font-family:'Syne Mono',monospace;font-size:12px;color:var(--muted);padding:12px 0;letter-spacing:.5px">NO ISSUE DATA AVAILABLE</div>`;
+  } else {
+    inner.outerHTML = fresh.issues.map((iss,i)=>`
+      <div class="issue-row fu" style="animation-delay:${i*.02}s" onclick="openReader(${id},${i})">
+        <div class="issue-thumb">
+          <img src="${iss.cover}" loading="lazy" onerror="this.src='${fresh.cover}'">
+        </div>
+        <div class="issue-info">
+          <div class="issue-num">${iss.label}</div>
+          <div class="issue-date">${fresh.pub}${iss.date?' · '+iss.date:''}</div>
+        </div>
+        <div class="issue-read-btn">READ</div>
+      </div>
+    `).join('');
+  }
+}
+
+$('series-back').onclick = ()=>{
+  const pg = $('page-series');
+  pg.classList.remove('show');
+  setTimeout(()=>pg.style.display='none',260);
+};
+
+// ── READER ────────────────────────────────────────
+function openReader(comicId, issIdx){
+  const c = COMICS.find(x=>x.id===comicId);
+  if(!c) return;
+  currentComicId = comicId;
+  currentIssueIdx = issIdx;
+  const iss = c.issues[issIdx];
+
+  const pg = $('page-reader');
+  pg.style.display = 'flex';
+  $('reader-notice').style.display = 'flex';
+
+  const label = iss ? iss.label : `#${issIdx+1}`;
+  $('reader-title').textContent = `${c.title} · ${label}`;
+  $('reader-progress').innerHTML = `<b>${c.title}</b> · ${label}`;
+  updateNavBtns(c, issIdx);
+  buildIframe(c, iss, issIdx);
+}
+
+function buildIframe(c, iss, issIdx){
+  const frame = $('reader-frame');
+  const old = frame.querySelector('iframe');
+  if(old) old.remove();
+
+  // Show loading screen
+  const ls = $('reader-load');
+  if(ls){ ls.className='reader-loading-screen'; }
+
+  const issNum = iss ? iss.num : String(issIdx+1);
+  const rcoSlug = RCO[c.title] || c.title.replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const rcoUrl = `https://readcomiconline.li/Comic/${rcoSlug}/Issue-${issNum}?readType=1`;
+
+  // Update notice link
+  const link = $('rco-link');
+  if(link){ link.href = rcoUrl; }
+
+  const iframe = document.createElement('iframe');
+  iframe.src = rcoUrl;
+  iframe.style.cssText = 'flex:1;width:100%;border:none;min-height:0;display:flex;';
+  iframe.setAttribute('allowfullscreen','');
+
+  iframe.onload = ()=>{
+    const ls = $('reader-load');
+    if(ls) ls.classList.add('gone');
+  };
+
+  frame.appendChild(iframe);
+}
+
+function updateNavBtns(c, idx){
+  const total = c.issues.length || 1;
+  [$('prev-btn'),$('prev-btn2')].forEach(b=>b.disabled = idx<=0);
+  [$('next-btn'),$('next-btn2')].forEach(b=>b.disabled = idx>=total-1);
+}
+
+function navIssue(dir){
+  const c = COMICS.find(x=>x.id===currentComicId);
+  if(!c) return;
+  const n = currentIssueIdx + dir;
+  if(n<0||n>=c.issues.length) return;
+  openReader(currentComicId, n);
+}
+
+$('prev-btn').onclick = ()=>navIssue(-1);
+$('next-btn').onclick = ()=>navIssue(1);
+$('prev-btn2').onclick = ()=>navIssue(-1);
+$('next-btn2').onclick = ()=>navIssue(1);
+
+$('reader-back').onclick = ()=>{
+  $('page-reader').style.display = 'none';
+  const frame = $('reader-frame');
+  const iframe = frame.querySelector('iframe');
+  if(iframe) iframe.remove();
+  // Restore loading screen for next open
+  const ls = $('reader-load');
+  if(ls) ls.className = 'reader-loading-screen';
+};
+
+// ── INIT ──────────────────────────────────────────
+initHero();
+renderTrending();
+renderLatest();
+renderGrid();
+loadCovers();
+</script>
+</body>
+</html>
